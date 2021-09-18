@@ -1,0 +1,20 @@
+CubeName:orders
+Name:CubeQueryOrders
+AggrFunc:Avg
+Measure:amount
+Gamma:account_dim.region,reason_dim.reason
+Sigma:account_dim.district_name='Benesov'
+@
+CubeName:orders
+Name:CubeQueryOrders2
+AggrFunc:Avg
+Measure:amount
+Gamma:account_dim.district_name,reason_dim.reason
+Sigma:account_dim.region='south Moravia',reason_dim.reason='Leasing'
+@
+CubeName:orders
+Name:CubeQueryOrders3
+AggrFunc:Avg
+Measure:amount
+Gamma:account_dim.region,reason_dim.reason
+Sigma:account_dim.district_name='Sumperk',reason_dim.reason='Household Payment'

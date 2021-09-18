@@ -1,0 +1,6 @@
+CubeName:loan
+Name: loan_KPIdemo_Month
+AggrFunc:Sum
+Measure:amount 
+Gamma:account_dim.region,status_dim.status
+Sigma:date_dim.month = '1998-01'
