@@ -20,6 +20,7 @@
 
 package cubemanager;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 //import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -35,7 +36,9 @@ import exctractionmethod.ExtractionMethod;
 import exctractionmethod.ExtractionMethodFactory;
 import result.Result;
 
-public class CubeManager {
+public class CubeManager implements Serializable{
+	private static final long serialVersionUID = 4390482518182625971L;
+
 
 	private CubeBase CBase;
 	private ICubeQueryTranslator cubeQueryTranslator;

@@ -22,6 +22,7 @@ package cubemanager.cubebase;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.Serializable;
 import java.sql.Connection;
 //import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -37,7 +38,9 @@ import cubemanager.starschema.Table;
 //import exctractionmethod.Result;
 import result.Result;
 
-public class CubeBase {
+public class CubeBase implements Serializable{
+	private static final long serialVersionUID = 4390482518182625971L;
+
 
 	private String username;
 	private String password;

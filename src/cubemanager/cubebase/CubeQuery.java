@@ -20,14 +20,18 @@
 
 package cubemanager.cubebase;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 //import java.util.List;
+import java.util.List;
 
 import exctractionmethod.ExtractionMethod;
 import result.Result;
 
-public class CubeQuery extends Cube {
+public class CubeQuery extends Cube implements Serializable{
+	private static final long serialVersionUID = 4390482518182625971L;
+
 
 	private ArrayList<String[]> GammaExpressions; // 0->dimension_name, 1->level
 	// of dimension
@@ -122,6 +126,16 @@ public class CubeQuery extends Cube {
 		toadd[0] = tablefield;
 		toadd[1] = operator;
 		toadd[2] = value;
+		SigmaExpressions.add(toadd);
+	}
+	
+	public void addMultipleSigmaExpressions(List<String> dimensions, List<String> levels, List<String> operators, List<String> values ) {
+		String toadd[] = new String[30];
+		for( int i=0; i<dimensions.size(); i++ ) {
+			toadd[3*i] = dimensions.get(i) + "." + levels.get(i);
+			toadd[3*i+1] = operators.get(i);
+			toadd[3*i+2] = values.get(i);
+		}
 		SigmaExpressions.add(toadd);
 	}
 

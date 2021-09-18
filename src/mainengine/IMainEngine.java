@@ -27,7 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cubemanager.CubeManager;
+import cubemanager.cubebase.CubeQuery;
+import cubemanager.cubebase.QueryHistoryManager;
 import mainengine.nlq.NLQValidationResults;
+import result.Result;
 
 /**
  * @author pvassil
@@ -94,7 +97,7 @@ public interface IMainEngine extends IServer {
 	 * @throws RemoteException
 	 * 
 	 */
-	String answerCubeQueryFromString(String queryRawString) throws RemoteException;
+	String answerCubeQueryFromString(Object o) throws RemoteException;
 	
 	
 	
@@ -124,7 +127,7 @@ public interface IMainEngine extends IServer {
 	 * @throws RemoteException
 	 * @see answerCubeQueryFromString
 	 */
-	ResultFileMetadata answerCubeQueryFromStringWithMetadata(String queryRawString) throws RemoteException;
+	ResultFileMetadata answerCubeQueryFromStringWithMetadata(Object o) throws RemoteException;
 
 	
 	
@@ -193,16 +196,29 @@ public interface IMainEngine extends IServer {
 	 */
     String[] answerCubeQueryWithInterestMeasures(String queryString, List<String> measures) throws RemoteException;
 	
+    //OLAP Roll up
+    ResultFileMetadata rollUp(CubeQuery cubeQuery, String dimension, String level) throws RemoteException;
+
+    ResultFileMetadata drillDown(CubeQuery cubeQuery, String dimension, String level) throws RemoteException;
+    
+    ResultFileMetadata slice(CubeQuery cubeQuery, String dimension, String level, String operator, String value) throws RemoteException;
+
+    ResultFileMetadata dice(CubeQuery cubeQuery, List<String> dimensions, List<String> levels, List<String> operators,
+			List<String> values) throws RemoteException;
+
+    QueryHistoryManager getQueryHistoryMng() throws RemoteException;
 	/**
 	 * @deprecated	Not to be used in the context of the DelianCubeEngine project.
 	 * This is an old-to-be-removed method, from Cinecubes, that turns on/off audio and MS word generation
 	 * 
 	 * @param audio	To turn on/off audio generation
 	 * @param word	To turn on/off MS Word generation
+	 * @return 
 	 * @throws RemoteException
 	 */
 //	void optionsChoice(boolean audio, boolean word)throws RemoteException;
-	
-	
+
+		
+    	
 
 }

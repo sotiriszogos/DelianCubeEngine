@@ -20,6 +20,7 @@
 
 package cubemanager.starschema;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -34,7 +35,9 @@ import result.Cell;
 import result.Result;
 
 
-public class Database {
+public class Database implements Serializable{
+	private static final long serialVersionUID = 4390482518182625971L;
+
 	/**
 	 * @uml.property  name="dBName"
 	 */

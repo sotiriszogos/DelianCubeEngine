@@ -2,6 +2,7 @@ package mainengine;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Scanner;
@@ -9,7 +10,9 @@ import java.util.Scanner;
 import cubemanager.CubeManager;
 import parsermgr.ParserManager;
 
-public class Session {
+public class Session implements Serializable{
+	private static final long serialVersionUID = 4390482518182625971L;
+
 
 	private String id;
 	private CubeManager cubeManager;

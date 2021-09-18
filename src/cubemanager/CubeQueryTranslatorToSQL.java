@@ -73,7 +73,7 @@ public class CubeQueryTranslatorToSQL implements ICubeQueryTranslator {
 
 					/* Add the Sigma Expression */
 					ArrayList<Hierarchy> current_hierachy=dimension.getHier();
-					String toaddSigma[]=new String[3];
+					/*String toaddSigma[]=new String[3];
 					toaddSigma[0]=dimension.getTableName()+".";
 					
 					for(int k=0;k<current_hierachy.size();k++){//for each hierarchy of dimension
@@ -85,8 +85,64 @@ public class CubeQueryTranslatorToSQL implements ICubeQueryTranslator {
 						}
 					}
 					toaddSigma[1]=sigmaExpr[1];
-					toaddSigma[2]=sigmaExpr[2];
-					extractionMethod.addFilter(toaddSigma);					 
+					toaddSigma[2]=sigmaExpr[2];*/
+					
+					
+					//TODO SOT
+					
+					List<String> taS = new ArrayList<>();
+					String zero = dimension.getTableName()+".";
+					
+					for(int k=0;k<current_hierachy.size();k++){//for each hierarchy of dimension
+						List<Level> current_lvls=current_hierachy.get(k).getLevels();
+						for(int l=0;l<current_lvls.size();l++){							
+							if(current_lvls.get(l).getName().equals(tmp[1].trim())){
+								zero+=current_lvls.get(l).getAttributeName(0);
+							}
+						}
+					}
+					taS.add( zero );
+					taS.add( sigmaExpr[1] );
+					taS.add( sigmaExpr[2] );
+					
+					if( sigmaExpr.length>3 ) {
+						taS.add( "OR" );
+						for(int j=1; j<sigmaExpr.length/3; j++) {
+							int k=0;
+							if(sigmaExpr[3*j] != null) {
+								k++;
+								for(int o = 0;o < referCube.getListDimension().size(); o++) {
+									Dimension dim = referCube.getListDimension().get(o);
+									String[] t=sigmaExpr[3*j].split("\\.");
+									if(dim.hasSameName(t[0].trim())){
+										String z = dim.getTableName()+".";
+										for(int m=0;m<current_hierachy.size();m++){//for each hierarchy of dimension
+											List<Level> current_lvls=current_hierachy.get(m).getLevels();
+											for(int l=0;l<current_lvls.size();l++){							
+												if(current_lvls.get(l).getName().equals(t[1].trim())){
+													z+=current_lvls.get(l).getAttributeName(0);
+												}
+											}
+										}
+										taS.add(z);
+									}
+								}
+								taS.add(sigmaExpr[3*j+1]);	
+								taS.add(sigmaExpr[3*j+2]);	
+
+								if(k%3==0) {
+									taS.add( "OR" );
+								}
+							}
+						}
+					}
+					
+					String[] array = taS.toArray(new String[0]);
+					extractionMethod.addFilter(array);	
+					// END OF TODO
+					
+					
+				//	extractionMethod.addFilter(toaddSigma);					 
 				}
 			}
 		} //end for of WhereClasue

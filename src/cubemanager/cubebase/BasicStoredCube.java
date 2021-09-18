@@ -20,9 +20,13 @@
 
 package cubemanager.cubebase;
 
+import java.io.Serializable;
+
 import cubemanager.starschema.FactTable;
 
-public class BasicStoredCube extends Cube {
+public class BasicStoredCube extends Cube implements Serializable{
+	private static final long serialVersionUID = 4390482518182625971L;
+
     
 	/**
 	 * @uml.property  name="fCtbl"
