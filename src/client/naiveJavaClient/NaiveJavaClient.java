@@ -24,17 +24,11 @@ import java.io.File;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.io.Serializable;
 
 import client.ClientRMITransferer;
-import cubemanager.cubebase.QueryHistoryManager;
 //import mainengine.Foo;
 import mainengine.IMainEngine;
 import mainengine.ResultFileMetadata;
-import mainengine.Session;
 /**
  * A simple client that 
  * (a) locates an RMI server in the HOST at PORT
@@ -43,8 +37,7 @@ import mainengine.Session;
  * @author pvassil
  *
  */
-public class NaiveJavaClient implements Serializable{
-	private static final long serialVersionUID = 4390482518182625971L;
+public class NaiveJavaClient {
 
 	// Host or IP of Server
 	private static final String HOST = "localhost";
@@ -65,6 +58,7 @@ public class NaiveJavaClient implements Serializable{
 		//service.optionsChoice(false, false);
 		
 		
+		
 		// Cube ADULT and queries
 		/*service.initializeConnection("adult_no_dublic", "CinecubesUser",
 				"Cinecubes", "adult", "adult");
@@ -76,12 +70,9 @@ public class NaiveJavaClient implements Serializable{
 				"Cinecubes", "pkdd99", "loan");
 		System.out.println("Completed connection initialization");
 
-
-		
 		//CleanUp client Cache
 		File resultFolder = new File("ClientCache");
 		deleteAllFilesOfFolder(resultFolder);
-		
 		
 		//Run queries
 		//File f2 = new File("InputFiles/cubeQueriesloan.ini");
@@ -95,7 +86,6 @@ public class NaiveJavaClient implements Serializable{
 		File f4 = new File("InputFiles/cubeQueriesorder.ini");
 		service.answerCubeQueriesFromFile(f4);/**/
 		
-
 		
 		for(String s: fileLocations) {
 			System.out.println("Find the next result at " + s);
@@ -137,18 +127,7 @@ public class NaiveJavaClient implements Serializable{
 		//String [] modelsToGenerate = {};
 		ResultFileMetadata resMetadata = service.answerCubeQueryFromStringWithModels(queryFired, modelsToGenerate);
 		
-		QueryHistoryManager queryHistory = service.getQueryHistoryMng();
-		service.rollUp(queryHistory.getQueryByName("LoanQuery11_S1_CG-Prtl"), "account_dim", "lvl3");
-		
-		service.slice(queryHistory.getQueryByName("LoanQuery11_S1_CG-Prtl"), "account_dim", "lvl1", "=", "'Sumperk'");
 
-		List<String> dimensions = Collections.unmodifiableList(Arrays.asList("account_dim", "date_dim"));
-		List<String> levels = Collections.unmodifiableList(Arrays.asList("lvl1", "lvl3"));
-		List<String> operators = Collections.unmodifiableList(Arrays.asList("=", "="));
-		List<String> values = Collections.unmodifiableList(Arrays.asList("'Sumperk'", "1998"));
-		
-		service.dice(queryHistory.getQueryByName("LoanQuery11_S1_CG-Prtl"), dimensions, levels, operators, values);
-		
 		
 		String remoteFolder = resMetadata.getLocalFolder();
 		String remoteResultsFile = resMetadata.getResultFile();

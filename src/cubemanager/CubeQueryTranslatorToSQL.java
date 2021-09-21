@@ -73,22 +73,6 @@ public class CubeQueryTranslatorToSQL implements ICubeQueryTranslator {
 
 					/* Add the Sigma Expression */
 					ArrayList<Hierarchy> current_hierachy=dimension.getHier();
-					/*String toaddSigma[]=new String[3];
-					toaddSigma[0]=dimension.getTableName()+".";
-					
-					for(int k=0;k<current_hierachy.size();k++){//for each hierarchy of dimension
-						List<Level> current_lvls=current_hierachy.get(k).getLevels();
-						for(int l=0;l<current_lvls.size();l++){							
-							if(current_lvls.get(l).getName().equals(tmp[1].trim())){
-								toaddSigma[0]+=current_lvls.get(l).getAttributeName(0);
-							}
-						}
-					}
-					toaddSigma[1]=sigmaExpr[1];
-					toaddSigma[2]=sigmaExpr[2];*/
-					
-					
-					//TODO SOT
 					
 					List<String> taS = new ArrayList<>();
 					String zero = dimension.getTableName()+".";
@@ -138,11 +122,7 @@ public class CubeQueryTranslatorToSQL implements ICubeQueryTranslator {
 					}
 					
 					String[] array = taS.toArray(new String[0]);
-					extractionMethod.addFilter(array);	
-					// END OF TODO
-					
-					
-				//	extractionMethod.addFilter(toaddSigma);					 
+					extractionMethod.addFilter(array);						 
 				}
 			}
 		} //end for of WhereClasue

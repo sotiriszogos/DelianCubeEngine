@@ -865,7 +865,6 @@ System.out.println("@SRV: INFO FILE\t" + resMetadata.getResultInfoFile());
 		for( String[] gammaExpression : newCubeQuery.getGammaExpressions() ) {
 			if( gammaExpression[0].equals(dimension) ) {
 				if(Integer.parseInt( gammaExpression[1].replace("lvl","") ) > Integer.parseInt( level.replace("lvl","") )) {
-					//gammaExpression[1] = "lvl" + (Integer.parseInt( gammaExpression[1].replace("lvl","") ) + 1);
 					System.out.println("You can't roll up to a lower or equal level");
 				} else {
 					gammaExpression[1] = level;
@@ -879,9 +878,8 @@ System.out.println("@SRV: INFO FILE\t" + resMetadata.getResultInfoFile());
 			list.add(gamma);
 			newCubeQuery.setGammaExpressions(list);
 		}
-		String newQueryString = newCubeQuery.toString();
+		newCubeQuery.setName("roll-up" + cubeQuery.getName());
 		ResultFileMetadata res = this.answerCubeQueryFromStringWithMetadata(newCubeQuery);
-		//Result res = cubeManager.executeQuery(cubeQuery);
 		return res;
 	}
 	
@@ -892,7 +890,6 @@ System.out.println("@SRV: INFO FILE\t" + resMetadata.getResultInfoFile());
 		for( String[] gammaExpression : newCubeQuery.getGammaExpressions() ) {
 			if( gammaExpression[0].equals(dimension) ) {
 				if(Integer.parseInt( gammaExpression[1].replace("lvl","") ) < Integer.parseInt( level.replace("lvl","") )) {
-					//gammaExpression[1] = "lvl" + (Integer.parseInt( gammaExpression[1].replace("lvl","") ) - 1);
 					System.out.println("You can't drill down to a higher or equal level");
 				} else {
 					gammaExpression[1] = level;
@@ -906,9 +903,8 @@ System.out.println("@SRV: INFO FILE\t" + resMetadata.getResultInfoFile());
 			list.add(gamma);
 			newCubeQuery.setGammaExpressions(list);
 		}
-		String newQueryString = newCubeQuery.toString();
+		newCubeQuery.setName("drill down" + cubeQuery.getName());
 		ResultFileMetadata res = this.answerCubeQueryFromStringWithMetadata(newCubeQuery);
-		//Result res = cubeManager.executeQuery(cubeQuery);
 		return res;
 	}
 
@@ -917,8 +913,8 @@ System.out.println("@SRV: INFO FILE\t" + resMetadata.getResultInfoFile());
 	public ResultFileMetadata slice(CubeQuery cubeQuery, String dimension, String level, String operator, String value)
 			throws RemoteException {
 		CubeQuery newCubeQuery = new CubeQuery(cubeQuery); 
+		newCubeQuery.setName("slice" + cubeQuery.getName());
 		newCubeQuery.addSigmaExpression(dimension + "."+ level, operator, value);
-		String newQueryString = newCubeQuery.toString();
 		ResultFileMetadata res = this.answerCubeQueryFromStringWithMetadata(newCubeQuery);
 		return res;
 	}
@@ -927,6 +923,7 @@ System.out.println("@SRV: INFO FILE\t" + resMetadata.getResultInfoFile());
 	public ResultFileMetadata dice(CubeQuery cubeQuery, List<String> dimensions, List<String> levels, List<String> operators, List<String> values)
 			throws RemoteException {
 		CubeQuery newCubeQuery = new CubeQuery(cubeQuery);
+		newCubeQuery.setName("dice" + cubeQuery.getName());
 		newCubeQuery.addMultipleSigmaExpressions(dimensions, levels, operators, values);
 		ResultFileMetadata res = this.answerCubeQueryFromStringWithMetadata(newCubeQuery);
 		return res;
