@@ -861,70 +861,124 @@ System.out.println("@SRV: INFO FILE\t" + resMetadata.getResultInfoFile());
 	@Override
 	public ResultFileMetadata rollUp(CubeQuery cubeQuery, String dimension, String level) throws RemoteException {
 		CubeQuery newCubeQuery = new CubeQuery(cubeQuery);
-		boolean b = false;
+		boolean dimensionIsAlreadyAGrouper = false;
+		if(!dimensions.contains(dimension)) {
+			System.out.println("The dimension does not exist");
+			ResultFileMetadata resMetadata = new ResultFileMetadata();
+			resMetadata.setErrorCheckingFile("The dimension does not exist");
+			return resMetadata;			
+		}
+		if(!dimensionsToLevelsHashmap.get(dimension).contains(level)) {
+			System.out.println("The level does not exist");
+			ResultFileMetadata resMetadata = new ResultFileMetadata();
+			resMetadata.setErrorCheckingFile("The level does not exist");
+			return resMetadata;
+		}
 		for( String[] gammaExpression : newCubeQuery.getGammaExpressions() ) {
 			if( gammaExpression[0].equals(dimension) ) {
-				if(Integer.parseInt( gammaExpression[1].replace("lvl","") ) > Integer.parseInt( level.replace("lvl","") )) {
+				dimensionIsAlreadyAGrouper = true;
+				if( dimensionsToLevelsHashmap.get(gammaExpression[0]).indexOf(gammaExpression[1]) > dimensionsToLevelsHashmap.get(dimension).indexOf(level) ) {
 					System.out.println("You can't roll up to a lower or equal level");
+					ResultFileMetadata resMetadata = new ResultFileMetadata();
+					resMetadata.setErrorCheckingFile("You can't roll up to a lower or equal level");
+					return resMetadata;
 				} else {
 					gammaExpression[1] = level;
 				}
-				b = true;
 			}
 		}
-		if(!b) {
+		if(!dimensionIsAlreadyAGrouper) {
 			ArrayList<String[]> list = new ArrayList<>();
 			String[] gamma = { dimension, level };
 			list.add(gamma);
 			newCubeQuery.setGammaExpressions(list);
 		}
-		newCubeQuery.setName("roll-up" + cubeQuery.getName());
-		ResultFileMetadata res = this.answerCubeQueryFromStringWithMetadata(newCubeQuery);
-		return res;
+		newCubeQuery.setName("Roll-up_" + cubeQuery.getName());
+		return this.answerCubeQueryFromStringWithMetadata(newCubeQuery);
 	}
 	
 	@Override
 	public ResultFileMetadata drillDown(CubeQuery cubeQuery, String dimension, String level) throws RemoteException {
 		CubeQuery newCubeQuery = new CubeQuery(cubeQuery);
-		boolean b = false;
+		boolean dimensionIsAlreadyAGrouper = false;
+		if(!dimensions.contains(dimension)) {
+			System.out.println("The dimension does not exist");
+			ResultFileMetadata resMetadata = new ResultFileMetadata();
+			resMetadata.setErrorCheckingFile("The dimension does not exist");
+			return resMetadata;			
+		}
+		if(!dimensionsToLevelsHashmap.get(dimension).contains(level)) {
+			System.out.println("The level does not exist");
+			ResultFileMetadata resMetadata = new ResultFileMetadata();
+			resMetadata.setErrorCheckingFile("The level does not exist");
+			return resMetadata;
+		}
 		for( String[] gammaExpression : newCubeQuery.getGammaExpressions() ) {
 			if( gammaExpression[0].equals(dimension) ) {
-				if(Integer.parseInt( gammaExpression[1].replace("lvl","") ) < Integer.parseInt( level.replace("lvl","") )) {
+				dimensionIsAlreadyAGrouper = true;
+				if( dimensionsToLevelsHashmap.get(gammaExpression[0]).indexOf(gammaExpression[1]) < dimensionsToLevelsHashmap.get(dimension).indexOf(level) ) {
 					System.out.println("You can't drill down to a higher or equal level");
+					ResultFileMetadata resMetadata = new ResultFileMetadata();
+					resMetadata.setErrorCheckingFile("You can't drill down to an upper or equal level");
+					return resMetadata;
 				} else {
 					gammaExpression[1] = level;
 				}
-				b = true;
 			}
 		}
-		if(!b) {
+		if(!dimensionIsAlreadyAGrouper) {
 			ArrayList<String[]> list = new ArrayList<>();
 			String[] gamma = { dimension, level };
 			list.add(gamma);
 			newCubeQuery.setGammaExpressions(list);
 		}
-		newCubeQuery.setName("drill down" + cubeQuery.getName());
-		ResultFileMetadata res = this.answerCubeQueryFromStringWithMetadata(newCubeQuery);
-		return res;
+		newCubeQuery.setName("Drill-down_" + cubeQuery.getName());
+		return this.answerCubeQueryFromStringWithMetadata(newCubeQuery);
 	}
 
 
 	@Override
 	public ResultFileMetadata slice(CubeQuery cubeQuery, String dimension, String level, String operator, String value)
 			throws RemoteException {
+		//TODO Check if dimension is already a grouper
 		CubeQuery newCubeQuery = new CubeQuery(cubeQuery); 
-		newCubeQuery.setName("slice" + cubeQuery.getName());
+		if(!dimensions.contains(dimension)) {
+			System.out.println("The dimension does not exist");
+			ResultFileMetadata resMetadata = new ResultFileMetadata();
+			resMetadata.setErrorCheckingFile("The dimension does not exist");
+			return resMetadata;			
+		}
+		if(!dimensionsToLevelsHashmap.get(dimension).contains(level)) {
+			System.out.println("The level does not exist");
+			ResultFileMetadata resMetadata = new ResultFileMetadata();
+			resMetadata.setErrorCheckingFile("The level does not exist");
+			return resMetadata;
+		}
+		newCubeQuery.setName("Slice_" + cubeQuery.getName());
 		newCubeQuery.addSigmaExpression(dimension + "."+ level, operator, value);
-		ResultFileMetadata res = this.answerCubeQueryFromStringWithMetadata(newCubeQuery);
-		return res;
+		return this.answerCubeQueryFromStringWithMetadata(newCubeQuery);
 	}
 	
 	@Override
-	public ResultFileMetadata dice(CubeQuery cubeQuery, List<String> dimensions, List<String> levels, List<String> operators, List<String> values)
+	public ResultFileMetadata dice(CubeQuery cubeQuery, List<String> dims, List<String> levels, List<String> operators, List<String> values)
 			throws RemoteException {
 		CubeQuery newCubeQuery = new CubeQuery(cubeQuery);
-		newCubeQuery.setName("dice" + cubeQuery.getName());
-		newCubeQuery.addMultipleSigmaExpressions(dimensions, levels, operators, values);
+		for( int i = 0; i < dims.size(); i++ ) {
+			if(!dimensions.contains(dims.get(i))) {
+				System.out.println("The dimension does not exist");
+				ResultFileMetadata resMetadata = new ResultFileMetadata();
+				resMetadata.setErrorCheckingFile("The dimension does not exist");
+				return resMetadata;			
+			}
+			if(!dimensionsToLevelsHashmap.get(dims.get(i)).contains(levels.get(i))) {
+				System.out.println("The level does not exist");
+				ResultFileMetadata resMetadata = new ResultFileMetadata();
+				resMetadata.setErrorCheckingFile("The level does not exist");
+				return resMetadata;
+			}
+		}
+		newCubeQuery.setName("Dice_" + cubeQuery.getName());
+		newCubeQuery.addMultipleSigmaExpressions(dims, levels, operators, values);
 		ResultFileMetadata res = this.answerCubeQueryFromStringWithMetadata(newCubeQuery);
 		return res;
 	}
