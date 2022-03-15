@@ -85,6 +85,12 @@ public class CubeQueryTranslatorToSQL implements ICubeQueryTranslator {
 							}
 						}
 					}
+					if( sigmaExpr.length>3) {
+						taS.add("(");
+					}
+					
+					
+					
 					taS.add( zero );
 					taS.add( sigmaExpr[1] );
 					taS.add( sigmaExpr[2] );
@@ -100,6 +106,7 @@ public class CubeQueryTranslatorToSQL implements ICubeQueryTranslator {
 									String[] t=sigmaExpr[3*j].split("\\.");
 									if(dim.hasSameName(t[0].trim())){
 										String z = dim.getTableName()+".";
+										current_hierachy = dim.getHier();
 										for(int m=0;m<current_hierachy.size();m++){//for each hierarchy of dimension
 											List<Level> current_lvls=current_hierachy.get(m).getLevels();
 											for(int l=0;l<current_lvls.size();l++){							
@@ -119,6 +126,10 @@ public class CubeQueryTranslatorToSQL implements ICubeQueryTranslator {
 								}
 							}
 						}
+					}
+					
+					if( sigmaExpr.length>3) {
+						taS.add(")");
 					}
 					
 					String[] array = taS.toArray(new String[0]);

@@ -14,7 +14,8 @@ import cubemanager.cubebase.QueryHistoryManager;
 import mainengine.IMainEngine;
 import mainengine.ResultFileMetadata;
 
-public class SessionJavaClient  implements Serializable{
+public class SessionJavaClientAdult implements Serializable{
+
 	private static final long serialVersionUID = 4390482518182625971L;
 
 	// Host or IP of Server
@@ -33,20 +34,21 @@ public class SessionJavaClient  implements Serializable{
 			System.exit(-100);
 		}
 
-		// Cube LOAN and queries
-		service.initializeConnection("pkdd99_star_10m", "CinecubesUser",
-				"Cinecubes", "pkdd99_star", "loan");
+		// Cube ADULT and queries
+		service.initializeConnection("adult_no_dublic_10m", "CinecubesUser",
+						"Cinecubes", "adult", "adult");
 		System.out.println("Completed connection initialization");
-
-				
+		
+		
 		//CleanUp client Cache
 		File resultFolder = new File("ClientCache");
 		deleteAllFilesOfFolder(resultFolder);
 		
 		
 		//Run queries
-		File f2 = new File("InputFiles/pkdd99_star/Queries/exp.txt");
+		File f2 = new File("InputFiles/adult/Adult/exp2.txt");
 		ArrayList<String> fileLocations = service.answerCubeQueriesFromFile(f2);
+		
 		
 		for(String s: fileLocations) {
 			System.out.println("Find the next result at " + s);
@@ -62,7 +64,7 @@ public class SessionJavaClient  implements Serializable{
 		}
 		
 		QueryHistoryManager queryHistory = service.getQueryHistoryMng();
-		CubeQuery cb = queryHistory.getQueryByName("LoanQuery11_S1_CG-Prtl");
+		CubeQuery cb = queryHistory.getQueryByName("CubeQuery0");
 		
 		long startTime = 0;
 		long stopTime = 0;
@@ -73,16 +75,17 @@ public class SessionJavaClient  implements Serializable{
 		//roll-up
 		for(int i = 0; i < 5; i++) {
 			startTime = System.nanoTime();
-			resMetadata = service.rollUp(cb, "account_dim", "All_account");
+			resMetadata = service.rollUp(cb, "occupation_dim", "lvl2");
 			stopTime = System.nanoTime();
 			elapsedTime= stopTime - startTime;
 			elapsedTimeInSecond = (double) elapsedTime / 1_000_000_000;
 			System.out.println("Rollup: " + elapsedTimeInSecond + " seconds");
 		}
-		
+        
 		String remoteResultsFile = resMetadata.getResultFile();
 		String remoteInfoFile = resMetadata.getResultInfoFile();
-				
+		
+		
 		String localFolder = "ClientCache" + File.separator;
 		File remoteRes = new File(remoteResultsFile);
 		ClientRMITransferer.download(service, remoteRes, new File( localFolder + cb.getName() + "_t.tab"));
@@ -92,7 +95,7 @@ public class SessionJavaClient  implements Serializable{
 		//drill-down
 		for(int i = 0; i < 5; i++) {
 			startTime = System.nanoTime();
-			resMetadata = service.drillDown(cb, "account_dim", "district_name");
+			resMetadata = service.drillDown(cb, "education_dim", "lvl1");
 			stopTime = System.nanoTime();
 			elapsedTime= stopTime - startTime;
 			elapsedTimeInSecond = (double) elapsedTime / 1_000_000_000;
@@ -108,7 +111,7 @@ public class SessionJavaClient  implements Serializable{
 		//slice
 		for(int i = 0; i < 5; i++) {
 			startTime = System.nanoTime();
-			resMetadata = service.slice(queryHistory.getQueryByName("LoanQuery11_S1_CG-Prtl"), "date_dim", "month", "=", "1998-05");
+			resMetadata = service.slice(queryHistory.getQueryByName("CubeQuery0"), "marital_dim", "lvl2", "=", "'Married'");
 			stopTime = System.nanoTime();
 			elapsedTime= stopTime - startTime;
 			elapsedTimeInSecond = (double) elapsedTime / 1_000_000_000;
@@ -122,14 +125,14 @@ public class SessionJavaClient  implements Serializable{
 		ClientRMITransferer.download(service, remoteIRes, new File(localFolder + cb.getName() + "_Info.txt"));
 		
 		//dice
-		List<String> dimensions = Collections.unmodifiableList(Arrays.asList("account_dim", "date_dim"));
-		List<String> levels = Collections.unmodifiableList(Arrays.asList("district_name", "month"));
+		List<String> dimensions = Collections.unmodifiableList(Arrays.asList("marital_dim", "education_dim"));
+		List<String> levels = Collections.unmodifiableList(Arrays.asList("lvl2", "lvl3"));
 		List<String> operators = Collections.unmodifiableList(Arrays.asList("=", "="));
-		List<String> values = Collections.unmodifiableList(Arrays.asList("'Sumperk'", "'1998-05'"));
-
-		for(int i = 0; i < 5; i++) {		
+		List<String> values = Collections.unmodifiableList(Arrays.asList("'Married'", "'Post-Secondary'"));
+		
+		for(int i = 0; i < 5; i++) {
 			startTime = System.nanoTime();
-			service.dice(queryHistory.getQueryByName("LoanQuery11_S1_CG-Prtl"), dimensions, levels, operators, values);
+			service.dice(queryHistory.getQueryByName("CubeQuery0"), dimensions, levels, operators, values);
 			stopTime = System.nanoTime();
 			elapsedTime= stopTime - startTime;
 			elapsedTimeInSecond = (double) elapsedTime / 1_000_000_000;
@@ -157,5 +160,4 @@ public class SessionJavaClient  implements Serializable{
 		}
 		return i;
 	}//end method
-
 }
